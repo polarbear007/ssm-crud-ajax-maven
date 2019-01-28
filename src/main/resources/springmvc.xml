@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<!-- 配置视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<!-- 如果我们想要使用注解来开发 mvc 程序也就是说 handler 的话，那么我们就配置下面的这个注解驱动就可以了
+		有了这个注解驱动，我们就可以在 handler 方法上面直接使用  @RequestMapping()配置handler映射地址
+		下面是需要配置参数转换器的时候，才添加  conversion-service 属性-->
+	<mvc:annotation-driven/> 
+	 
+	 
+	 <!-- 使用下面的这个配置以后， handler 类就不需在 spring 容器配置 bean， 直接在类上面添加 @controller 即可
+		如果需要扫描多个包的话，那么可以使用通配符！！  
+		【注意】 只需要扫描 controller 层的类上面的注解，service/dao 层的由 applicationContext.xml 去扫描
+		其实， springmvc 容器是spring 容器里面的一个小容器，这两个容器还是有一些区别的。-->
+	 
+	<context:component-scan base-package="cn.itcast.controller" use-default-filters="false"> 
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+	</context:component-scan>
+	
+	
+	<!-- 配置静态资源
+		如果我们把 DispatcherServlet 的 url-pattern 设置成  / 的话，则必须配置下面的静态资源 -->
+	 <mvc:default-servlet-handler/>
+	 
+	<!-- 配置校验信息文件对象
+		  文件默认的位置在类路径下，所以不需要在前面添加 classpath
+		 文件的默认后缀是  .properties ，所以我们也不需要写    i18n.properties
+	 -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<!-- 如果只有一个配置文件，那么我们就使用 basename 参数就可以了
+			 如果有多个 properties 文件的话，那么我们就需要使用  basenames 参数，
+			 然后添加一个 <array> 或者 <list> 子标签
+		 -->
+		<property name="basenames">
+			<array>
+				<value>validationMessage</value>
+				<value>language</value>
+			</array>
+		</property>
+		<property name="defaultEncoding" value="utf-8"></property>
+	</bean>
+	
+	<!-- 配置 LocaleResolver ，我们打算把 locale 参数保存在 session，所以配置的是 SessionLocaleResolver  -->
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver"/>
+
+	<mvc:interceptors>
+		<!-- 设置获取 Locale 参数的拦截器，用于支持国际化  -->
+		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+			<!-- 设置语言参数名，如果我们不设置的话，默认是  locale -->
+			<property name="paramName" value="lang"/>
+		</bean>
+	</mvc:interceptors>
+</beans>

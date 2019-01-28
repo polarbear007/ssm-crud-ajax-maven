@@ -1,0 +1,23 @@
+本项主要演示如何使用 json 与前台进行交互：
+	以前我们都是使用 jsp 页面来展示数据，但是真实的开发环境中，已经很少有人使用 jsp 页面去展示数据了。
+	现在都是前后端分离，然后直接使用 html 页面展示数据。在 html 页面里面是无法使用 jsp 标签/ el表达式，
+	也无法读取 request 域、session 域、application 域 里面的数据。
+	
+	所以服务端想要发送数据给前端的话，那么就需要把数据先封装成 json 格式  ，前台使用 ajax 请求 json 数据。
+	
+	老实说，使用 ajax 有很多好处，但是这样一来，原来 jsp 帮我们处理的很多事情全部都要我们自己来做。
+	比如，解析json 数据，原来可以由很多的 jsp 标签来处理，现在不行了，得我们自己在解析。
+	比如，解析完数据还要自己进行 dom 操作，以前都是 jsp 自己帮我们翻译的。
+	比如， 以前在 jsp 页面我们可以很方便地把数据存在 request域、session 域，跟服务端的操作完全一样。取值就用 el 表达式。
+	     现在不行了，你有某个变量需要用，你就得放进json 数据里面，到时才拿到得。 
+	    你有某个变量需要保存，不好意思，不能直接存进 request 域或者  session 域，甚至你连 json 都操作不了。
+	    你要么定义一个 js 的全局变量来存储，要么你写写个dom 元素，然后把值以属性的方式保存起来。麻烦得很。
+	    
+	    
+发现问题：
+	1、本来我们是想要使用 通用mapper 来减少开发量的，但是发现使用了 通用mapper 以后，再加上Hibernate-validator 就会一直出异常。
+	2、 通用 mapper 虽然能支持二级缓存，但是配置的方式是在   mapper 接口上添加 @CacheNamespace 注解，  如果还要整合ehcache的话，
+	那么就要使用  @CacheNamespace(implementation=org.mybatis.caches.ehcache.EhcacheCache.class)
+	3、 如果我们要使用  batchExecutor 执行器的话，那么  insert/ update/ delete 操作都无法返回受影响的行数。
+	4、 本案例使用了 boostrap 的一些简单的样式和js ,确实让页面变得美观了不少。 也实现了很多弹窗（模态框）的功能。有机会要再深入学一下。
+	5、 本案例中用了大量的代码在写解析 json 和  拼接dom 元素，如果有时间，一定要学一些简化这方面的前端框架 。
