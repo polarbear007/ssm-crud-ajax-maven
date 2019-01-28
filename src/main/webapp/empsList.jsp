@@ -140,7 +140,7 @@
 			 	<table id="emps-table" class="table table-bordered table-hover">
 			 		<thead>
 			 			<tr>
-			 				<th><input id="select-all" type="checkbox">全选</th>
+			 				<th><input id="select-all" type="checkbox" >全选</th>
 			 				<th>编号</th>
 			 				<th>姓</th>
 			 				<th>名</th>
@@ -666,6 +666,13 @@
 			)
 		});
 		
+		// 为表头的那个全选选项添加onclick 事件，当我们点击这个选项的时候
+		// 其他子选项的 selected 状态都会变成跟这个选项一样
+		$("#select-all").click(function() {
+			var status = $(this).prop("checked");
+			$("#emps-table input[name=empIds]").prop("checked", status); 
+		});
+		
 		// 给修改员工信息页面的  邮箱栏添加 onchange 事件，看看是否跟数据库的数据重复
 		$("#updateEmp-form input[name=email]").change(function() {
 			var oldEmail = $(this).attr("oldEmail");
@@ -761,5 +768,14 @@
 				"json"
 			);
 		})
+		
+		// 给关闭按钮绑定点击事件
+		// 当我们点击关闭按钮时，清空里面的数据和提示信息
+		$(".updateEmp-close").click(function() {
+			// 更新成功的话，我们首先是清除原来的数据
+			$("#updateEmp-form")[0].reset();
+			// 清除所有的提示信息
+			$("#updateEmp-form font").removeAttr("color").text("");
+		});
 	</script>
 </html>
